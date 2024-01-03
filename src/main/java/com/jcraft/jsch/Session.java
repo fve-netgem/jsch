@@ -2295,8 +2295,8 @@ public class Session {
    * @see #setPortForwardingR(String bind_address, int rport, String host, int lport, SocketFactory
    *      sf)
    */
-  public void setPortForwardingR(int rport, String host, int lport) throws JSchException {
-    setPortForwardingR(null, rport, host, lport, (SocketFactory) null);
+  public int setPortForwardingR(int rport, String host, int lport) throws JSchException {
+    return setPortForwardingR(null, rport, host, lport, (SocketFactory) null);
   }
 
   /**
@@ -2313,9 +2313,9 @@ public class Session {
    * @see #setPortForwardingR(String bind_address, int rport, String host, int lport, SocketFactory
    *      sf)
    */
-  public void setPortForwardingR(String bind_address, int rport, String host, int lport)
+  public int setPortForwardingR(String bind_address, int rport, String host, int lport)
       throws JSchException {
-    setPortForwardingR(bind_address, rport, host, lport, (SocketFactory) null);
+    return setPortForwardingR(bind_address, rport, host, lport, (SocketFactory) null);
   }
 
   /**
@@ -2328,9 +2328,9 @@ public class Session {
    * @see #setPortForwardingR(String bind_address, int rport, String host, int lport, SocketFactory
    *      sf)
    */
-  public void setPortForwardingR(int rport, String host, int lport, SocketFactory sf)
+  public int setPortForwardingR(int rport, String host, int lport, SocketFactory sf)
       throws JSchException {
-    setPortForwardingR(null, rport, host, lport, sf);
+    return setPortForwardingR(null, rport, host, lport, sf);
   }
 
   // TODO: This method should return the integer value as the assigned port.
@@ -2348,10 +2348,11 @@ public class Session {
    * @param lport local port
    * @param sf socket factory
    */
-  public void setPortForwardingR(String bind_address, int rport, String host, int lport,
+  public int setPortForwardingR(String bind_address, int rport, String host, int lport,
       SocketFactory sf) throws JSchException {
     int allocated = _setPortForwardingR(bind_address, rport);
-    ChannelForwardedTCPIP.addPort(this, bind_address, rport, allocated, host, lport, sf);
+    ChannelForwardedTCPIP.addPort(this, bind_address, rport == 0 ? allocated : rport, allocated, host, lport, sf);
+    return allocated;
   }
 
   /**
@@ -2364,8 +2365,8 @@ public class Session {
    * @param daemon class name, which implements "ForwardedTCPIPDaemon"
    * @see #setPortForwardingR(String bind_address, int rport, String daemon, Object[] arg)
    */
-  public void setPortForwardingR(int rport, String daemon) throws JSchException {
-    setPortForwardingR(null, rport, daemon, null);
+  public int setPortForwardingR(int rport, String daemon) throws JSchException {
+    return setPortForwardingR(null, rport, daemon, null);
   }
 
   /**
@@ -2379,8 +2380,8 @@ public class Session {
    * @param arg arguments for "daemon"
    * @see #setPortForwardingR(String bind_address, int rport, String daemon, Object[] arg)
    */
-  public void setPortForwardingR(int rport, String daemon, Object[] arg) throws JSchException {
-    setPortForwardingR(null, rport, daemon, arg);
+  public int setPortForwardingR(int rport, String daemon, Object[] arg) throws JSchException {
+    return setPortForwardingR(null, rport, daemon, arg);
   }
 
   /**
@@ -2399,10 +2400,11 @@ public class Session {
    * @param arg arguments for "daemon"
    * @see #setPortForwardingR(String bind_address, int rport, String daemon, Object[] arg)
    */
-  public void setPortForwardingR(String bind_address, int rport, String daemon, Object[] arg)
+  public int setPortForwardingR(String bind_address, int rport, String daemon, Object[] arg)
       throws JSchException {
     int allocated = _setPortForwardingR(bind_address, rport);
-    ChannelForwardedTCPIP.addPort(this, bind_address, rport, allocated, daemon, arg);
+    ChannelForwardedTCPIP.addPort(this, bind_address, rport == 0 ? allocated : rport, allocated, daemon, arg);
+    return allocated;
   }
 
   /**
@@ -2509,7 +2511,7 @@ public class Session {
   public int setPortForwardingR(String conf) throws JSchException {
     Forwarding f = parseForwarding(conf);
     int allocated = _setPortForwardingR(f.bind_address, f.port);
-    ChannelForwardedTCPIP.addPort(this, f.bind_address, f.port, allocated, f.host, f.hostport,
+    ChannelForwardedTCPIP.addPort(this, f.bind_address, f.port == 0 ? allocated : f.port, allocated, f.host, f.hostport,
         null);
     return allocated;
   }
